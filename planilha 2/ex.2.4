@@ -1,0 +1,50 @@
+using System;
+
+internal class Program
+{
+    private static void Main(string[] args)
+    {
+        double valorPresente = 2000.00;
+        double taxaJurosMes = 0.02;
+        double retirada = 0;
+        double percentualJuros;
+
+        Console.WriteLine("Digite o mes do resgate:");
+        double mes = double.Parse(Console.ReadLine());
+
+        Console.WriteLine("Digite o total de meses:");
+        double periodo = double.Parse(Console.ReadLine());
+
+        Console.WriteLine("| valor presente  | taxa de juros | periodo de a.m. | rendimento    | renda acumulada | resgate   | total      |");
+        Console.WriteLine("|--------------------------------------------------------------------------------------------------------------|");
+
+        for (int x = 1; x <= periodo; x++)
+        {
+            if (x < mes)
+            {
+                percentualJuros = valorPresente * Math.Pow(1 + taxaJurosMes, x);
+                MostrarDetalhesInvestimento(valorPresente, taxaJurosMes, x, percentualJuros - valorPresente, percentualJuros, retirada, percentualJuros);
+            }
+            else if (x == mes)
+            {
+                Console.WriteLine("Digite o valor de retirada:");
+                double valorRetirada = double.Parse(Console.ReadLine());
+                retirada = valorRetirada;
+                double rendimentoAntesDoResgate = valorPresente * Math.Pow(1 + taxaJurosMes, x - 1);
+                percentualJuros = rendimentoAntesDoResgate * (1 + taxaJurosMes);
+                valorPresente = percentualJuros - retirada;
+                MostrarDetalhesInvestimento(rendimentoAntesDoResgate, taxaJurosMes, x, percentualJuros - rendimentoAntesDoResgate, percentualJuros, retirada, valorPresente);
+            }
+            else if (x > mes)
+            {
+                percentualJuros = valorPresente * Math.Pow(1 + taxaJurosMes, x - mes);
+                MostrarDetalhesInvestimento(valorPresente, taxaJurosMes, x, percentualJuros - valorPresente, percentualJuros, retirada, percentualJuros);
+            }
+        }
+    }
+
+    private static void MostrarDetalhesInvestimento(double valorPresente, double taxaJurosMes, int periodo, double rendimento, double rendaAcumulada, double resgate, double total)
+    {
+        Console.WriteLine($"| {valorPresente.ToString("C"),-16:C2} | {taxaJurosMes * 100,-13}% | {periodo,-15} | {rendimento.ToString("C"),-13} | {rendaAcumulada.ToString("C"),-15} | {resgate.ToString("C"),-9} | {total.ToString("C"),-9} |");
+    }
+}

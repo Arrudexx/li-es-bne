@@ -1,0 +1,88 @@
+using System;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        double valorAtual = ObterDoublePositivo("Informe o valor atual:");
+        double taxaJuros = ObterDoublePositivo("Informe a taxa de juros (em %):") / 100;
+        int periodoTotal = ObterInteiroPositivo("Informe o período em meses:");
+        int mesResgate = ObterInteiroPositivoMenorIgual("Informe o mês do resgate:", periodoTotal);
+        double valorSaque = ObterDoubleNaoNegativo("Informe o valor do saque (se houver):");
+
+        Console.WriteLine("| PERÍODO |  VALOR ATUAL  | RENDIMENTO LIQ. | REND. ACUMULADO |  SAQUE   | VALOR FINAL |");
+        Console.WriteLine("|---------|---------------|-----------------|-----------------|----------|-------------|");
+
+        for (int periodo = 0; periodo <= periodoTotal; periodo++)
+        {
+            double rendimento = CalcularRendimento(valorAtual, taxaJuros);
+            double rendimentoLiquido = rendimento - (periodo == mesResgate ? valorSaque : 0);
+            double rendimentoAcumulado = CalcularRendimentoAcumulado(valorAtual, taxaJuros);
+            valorAtual = rendimentoAcumulado - (periodo == mesResgate ? valorSaque : 0);
+
+            MostrarDetalhesInvestimento(periodo, valorAtual, rendimentoLiquido, rendimentoAcumulado, periodo == mesResgate ? valorSaque : 0, valorAtual);
+
+            if (valorAtual <= 0)
+                break;
+        }
+    }
+
+    static double ObterDoublePositivo(string mensagem)
+    {
+        double valor;
+        do
+        {
+            Console.WriteLine(mensagem);
+        } while (!double.TryParse(Console.ReadLine(), out valor) || valor <= 0);
+
+        return valor;
+    }
+
+    static int ObterInteiroPositivo(string mensagem)
+    {
+        int valor;
+        do
+        {
+            Console.WriteLine(mensagem);
+        } while (!int.TryParse(Console.ReadLine(), out valor) || valor <= 0);
+
+        return valor;
+    }
+
+    static int ObterInteiroPositivoMenorIgual(string mensagem, int max)
+    {
+        int valor;
+        do
+        {
+            Console.WriteLine(mensagem);
+        } while (!int.TryParse(Console.ReadLine(), out valor) || valor <= 0 || valor > max);
+
+        return valor;
+    }
+
+    static double ObterDoubleNaoNegativo(string mensagem)
+    {
+        double valor;
+        do
+        {
+            Console.WriteLine(mensagem);
+        } while (!double.TryParse(Console.ReadLine(), out valor) || valor < 0);
+
+        return valor;
+    }
+
+    static double CalcularRendimento(double valor, double taxaJuros)
+    {
+        return valor * taxaJuros;
+    }
+
+    static double CalcularRendimentoAcumulado(double valor, double taxaJuros)
+    {
+        return valor + CalcularRendimento(valor, taxaJuros);
+    }
+
+    static void MostrarDetalhesInvestimento(int periodo, double valorAtual, double rendimentoLiquido, double rendimentoAcumulado, double saque, double valorFinal)
+    {
+        Console.WriteLine($"| {periodo,-7} | {valorAtual,13:C2} | {rendimentoLiquido,15:C2} | {rendimentoAcumulado,15:C2} | {saque,8:C2} | {valorFinal,11:C2} |");
+    }
+}
